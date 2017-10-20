@@ -110,7 +110,7 @@ annotate_color &lt;- function(geom = &#39;text&#39;, x = NULL, y = NULL, xmin = 
   
   if (length(colors) &gt; length(labels)){   # Shortens the length of &#39;colors&#39; to match the length of &#39;labels&#39;
     colors = colors[1:length(labels)]
-    warning(&#39;The length of the colors arg is longer than the number of words in the labels arg. Extra colors will be               ignored.&#39;)
+    warning(&#39;The length of the colors arg is longer than the number of words in the labels arg. Extra colors will be ignored.&#39;)
   }
   
    # Formats the labels argument into usable arguments for each annotation function
