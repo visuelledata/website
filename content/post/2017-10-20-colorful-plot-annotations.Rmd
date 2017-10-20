@@ -20,7 +20,7 @@ options(warn = -1)
 ```
 
 
-```{r annotatecolor, echo = FALSE}
+```{r loadfunction, echo = FALSE}
 ## This function will allow you to assign color to each word in a plot annotation
 # Dependencies: purrr, ggplot2
 

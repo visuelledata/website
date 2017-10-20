@@ -1,0 +1,142 @@
+---
+title: Colorful plot annotations
+author: Chris Peralta
+date: '2017-10-20'
+slug: colorful-plot-annotations
+categories:
+  - R
+tags:
+  - ggplot2
+description: ''
+---
+
+
+
+<p><br></p>
+<p>If you want to go straight to the function, you can find it at the bottom of the page.</p>
+<p>While working on a data visualization project, I discovered that ggplot2 does not allow for easy multicolor plot annoations. So after some searching I discovered <a href="https://andrewwhitby.com/2017/09/18/multi-color-text-ggplot2/comment-page-1/#comment-7400">this post from Andrew Whitby’s blog</a>. His method is to overlay multiple annotate() functions with plotmath components to hide the parts of strings to allow the strings to overlap. This method requires the text to be formatted as shown below:</p>
+<pre class="r"><code>annotate(&#39;text&#39;, x = 3, y = .03, parse = T,label = &#39;&quot;I &quot; * phantom(&quot;want many more colors&quot;)&#39;, color = &#39;grey&#39;) + 
+annotate(&#39;text&#39;, x = 3, y = .03, parse = T,label = &#39;phantom(&quot;I &quot;) * &quot;want&quot; * phantom(&quot;many more colors&quot;)&#39;, color = &#39;blue&#39;) +
+annotate(&#39;text&#39;, x = 3, y = .03, parse = T,label = &#39;phantom(&quot;I want &quot;) * &quot;many&quot; * phantom(&quot;more colors&quot;)&#39;, color = &#39;green&#39;) +
+annotate(&#39;text&#39;, x = 3, y = .03, parse = T,label = &#39;phantom(&quot;I want many &quot;) * &quot;more&quot; * phantom(&quot;colors&quot;)&#39;, color = &#39;purple&#39;) +
+annotate(&#39;text&#39;, x = 3, y = .03, parse = T,label = &#39;phantom(&quot;I want many more &quot;) * &quot;colors&quot;&#39;, color = &#39;orange&#39;) </code></pre>
+<p><br> <br></p>
+<p>This code hides the word that isn’t being passed through phantom() and will color it. Then, it stacks the labels onto each other and prints them on the plot. The huge downside of this method is that it is very labor instensive and requires very specific formatting. So I decided to write a function that writes all of the annotate() functions for me.</p>
+<p>The function, annotate_color(), takes its arguments in the same order as annotate function and to call the same set of functions you would just type:</p>
+<pre class="r"><code>annotate_color(x = 3, y = .03, 
+               labels = &#39;I want many more colors&#39;,
+               colors = c(&#39;blue&#39;, &#39;green&#39;, &#39;purple&#39;, &#39;orange&#39;, &#39;yellow&#39;))</code></pre>
+<p><br> <br></p>
+<p>Both of these blocks of code would evaluate to something like this:</p>
+<p><img src="/post/2017-10-20-colorful-plot-annotations_files/figure-html/plotexample-1.jpeg" width="672" /></p>
+<p><br></p>
+<p>Hopefully, you won’t actually use it to create a graph that looks like that as it is quite ugly.<br />
+This is an example of how it could be better used.</p>
+<p><img src="/post/2017-10-20-colorful-plot-annotations_files/figure-html/goodexample-1.jpeg" width="672" /></p>
+<p><br> <br></p>
+<div id="input-methods" class="section level3">
+<h3>Input methods</h3>
+<pre class="r"><code># Make or import your data
+data &lt;- as.tibble(replicate(10, rnorm(1000))) 
+
+
+# Assigning a color for each word
+data %&gt;% 
+  ggplot(aes(x = V1, y = V2)) + 
+  geom_point() + 
+  annotate_color(x = 0, y = 2.7, size = 6,
+                 labels = &#39;Assign different colors for each word&#39;,
+                 colors = c(&#39;blue&#39;, &#39;green&#39;, &#39;purple&#39;, &#39;orange&#39;, &#39;black&#39;, &#39;yellow&#39;))
+
+
+# Assigning a color for only one word in a string
+data %&gt;% 
+  ggplot(aes(x = V1, y = V2)) + 
+  geom_point() + 
+  annotate_color(x = 0, y = 2.7, default_color = &#39;black&#39;,
+                 labels = &#39;Assign different colors for one word&#39;,
+                 colors = c(&#39;&#39;, &#39;&#39;, &#39;red&#39;)) # You must assign strings before the target word you want to color...
+                                            # ... as words are colored in the order you type them
+
+#  Assigning colors for first and last words
+data %&gt;% 
+  ggplot(aes(x = V1, y = V2)) + 
+  geom_point() + 
+  annotate_color(x = 0, y = 2.7, default_color = &#39;purple&#39;, #
+                 labels = &#39;Assign different colors for the first and last words&#39;,
+                 colors = c(&#39;red&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;blue&#39;)) 
+
+
+# Coloring only the first word and all of the following words the same color. 
+data %&gt;% 
+  ggplot(aes(x = V1, y = V2)) + 
+  geom_point() + 
+  annotate_color(x = 0, y = 2.7, default_color = &#39;Grey30&#39;,
+                 labels = &#39;Assign different colors for one word&#39;,
+                 colors = c(&#39;red&#39;))
+
+
+### Notes
+# You can pass every argument that annotate() will accept into annotate_color().
+# The default geom type for annotate_color() is text, you can change it to any other geom that has a...
+# ... &#39;label&#39; and a &#39;color&#39;argument.
+# &#39;black&#39; is the default value for &#39;default_color&#39;</code></pre>
+<p><br> <br></p>
+</div>
+<div id="the-function" class="section level3">
+<h3>The function</h3>
+<pre class="r"><code>## This function will allow you to assign color to each word in a plot annotation
+# Dependencies: purrr, ggplot2
+
+annotate_color &lt;- function(geom = &#39;text&#39;, x = NULL, y = NULL, xmin = NULL, xmax = NULL,  
+                           ymin = NULL, ymax = NULL, xend = NULL, yend = NULL, ...,
+                           labels = NULL, colors = NULL, default_color = &#39;black&#39;){
+  
+  # Checks for essential arguments
+  if (is.null(colors) || is.null(x) || is.null(y) || is.null(labels)){
+    stop(&#39;Missing one of the arguments: labels, colors, x, or y&#39;)}
+  
+  
+  labels &lt;- strsplit(labels, &quot; &quot;)[[1]] 
+  n &lt;- length(labels)
+  
+  if (length(colors) &lt; length(labels)){   # Assigns any empty values in &#39;colors&#39; to the &#39;default_color&#39; 
+    colors &lt;- map_chr(seq_len(length(labels)), function(i){
+        if (is.na(colors[i]) | colors[i] == &#39;&#39;){
+          colors[i] &lt;- default_color
+        } else {colors[i] &lt;- colors [i]}}
+     )
+  }
+  
+  if (length(colors) &gt; length(labels)){   # Shortens the length of &#39;colors&#39; to match the length of &#39;labels&#39;
+    colors = colors[1:length(labels)]
+    warning(&#39;The length of the colors arg is longer than the number of words in the labels arg. Extra colors will be               ignored.&#39;)
+  }
+  
+   # Formats the labels argument into usable arguments for each annotation function
+    labels &lt;- map_chr(seq_len(n), function(i) {  
+      start0 &lt;- labels[seq_along(labels) &lt; i]    # Assigns the first part of the string 
+      mid0 &lt;- labels[i]                          # Assigns a single word 
+      end0 &lt;- labels[seq_along(labels) &gt; i]      # Assigns the last part of the string
+      start &lt;- paste0(&#39;phantom(&quot;&#39;, paste(start0, collapse = &quot; &quot;), &#39; &quot;)&#39;) # Wraps phantom() around the first part 
+      end &lt;- paste0(&#39;phantom(&quot;&#39;, paste(end0, collapse = &quot; &quot;), &#39; &quot;)&#39;) # Wraps phantom() around the last part
+      if(length(start0) &gt; 0 &amp;&amp; length(end0) &gt; 0) {  # Conditional statements for the formatting depending...
+        paste(start, paste0(&#39;&quot;&#39;, paste(mid0, collapse = &quot; &quot;), &#39;&quot;&#39;), end, sep = &#39; * &#39;) # ... on the position of &#39;mid0&#39;
+      } else if (length(end0) &gt; 0) {
+        paste(paste0(&#39;&quot;&#39;, paste(mid0, collapse = &quot; &quot;), &#39;&quot;&#39;), end, sep = &#39; * &#39;)
+      } else if (length(start0) &gt; 0) {
+        paste(start, paste0(&#39;&quot;&#39;, paste(mid0, collapse = &quot; &quot;), &#39;&quot;&#39;), sep = &#39; * &#39;)
+      } else {
+        stop(&quot;couldn&#39;t finish ...&quot;)
+      } # Anonymous function above created with the assistance of
+    })  # https://stackoverflow.com/users/3521006/docendo-discimus
+  
+  # Plugs all arguments into the annotate() function and stores them into a list
+  annofuncs &lt;- list()
+  annofuncs &lt;- map2(labels, colors, function(annolabel, annocolor){
+    annofuncs[seq_along(annolabel)] &lt;- list(annotate(geom, x, y, xmin, xmax, ymin, ymax, xend, yend, ...,
+                                         parse = T, label = annolabel, color = annocolor))
+  })
+  return(annofuncs) # Returns the list which can be added to a ggplot like any other layer
+}</code></pre>
+</div>
