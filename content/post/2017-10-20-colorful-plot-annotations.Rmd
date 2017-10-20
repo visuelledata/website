@@ -8,6 +8,7 @@ categories:
 tags:
   - ggplot2
 description: ''
+output: md_document
 ---
 
 <br>  
