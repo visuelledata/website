@@ -13,9 +13,9 @@ description: ''
 <br>  
   
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(dev = 'jpeg', echo = FALSE)
 library(tidyverse) # annotate_color( )not dependent on tidyverse, just ggplot and purrr
 library(SciencesPo)
+knitr::opts_chunk$set(dev = 'jpeg', echo = FALSE)
 options(warn = -1)
 ```
 
