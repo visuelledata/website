@@ -1,5 +1,5 @@
 baseurl = "/"
-title = "Visuelle Data"
+title = "Home"
 theme = "ghostwriter"
 languageCode = "en-us"
 copyright = "Chris Peralta"
