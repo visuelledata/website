@@ -1,4 +1,4 @@
-baseurl = "https://miner-canary-54500.netlify.com/"
+baseurl = "https://example.com/"
 title = "Ghostwriter example"
 theme = "ghostwriter"
 languageCode = "en-us"
