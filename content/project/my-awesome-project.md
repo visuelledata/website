@@ -1,8 +1,8 @@
 +++
 title = "No projects yet"
-description = "Projects in development."
+description = "In development."
 date = 2014-11-18T02:13:50Z
-author = "My name"
+author = "Chris Peralta"
 +++
 
 ## About project

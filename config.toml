@@ -16,7 +16,7 @@ googleAnalytics = ""#"XXX"
 [Params]
     intro = true
     headline = "Visuelle Data"
-    description = "A data science blog"
+    description = "A data science portfolio"
     github = "https://github.com/visuelledata"
     #linkedin = "https://linkedin.com/in/XXX/"
     #gplus = "https://google.com/+XXX"
