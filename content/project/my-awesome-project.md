@@ -1,6 +1,6 @@
 +++
-title = "My awesome project"
-description = "Description of my awesome project."
+title = "No projects yet"
+description = "Projects in development."
 date = 2014-11-18T02:13:50Z
 author = "My name"
 +++
