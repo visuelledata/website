@@ -20,20 +20,19 @@ annotate(&#39;text&#39;, x = 3, y = .03, parse = T,label = &#39;phantom(&quot;I 
 annotate(&#39;text&#39;, x = 3, y = .03, parse = T,label = &#39;phantom(&quot;I want &quot;) * &quot;many&quot; * phantom(&quot;more colors&quot;)&#39;, color = &#39;green&#39;) +
 annotate(&#39;text&#39;, x = 3, y = .03, parse = T,label = &#39;phantom(&quot;I want many &quot;) * &quot;more&quot; * phantom(&quot;colors&quot;)&#39;, color = &#39;purple&#39;) +
 annotate(&#39;text&#39;, x = 3, y = .03, parse = T,label = &#39;phantom(&quot;I want many more &quot;) * &quot;colors&quot;&#39;, color = &#39;orange&#39;) </code></pre>
-<p><br> <br></p>
+<p><br></p>
 <p>This code hides the word that isn’t being passed through phantom() and will color it. Then, it stacks the labels onto each other and prints them on the plot. The huge downside of this method is that it is very labor instensive and requires very specific formatting. So I decided to write a function that writes all of the annotate() functions for me.</p>
 <p>The function, annotate_color(), takes its arguments in the same order as annotate function and to call the same set of functions you would just type:</p>
 <pre class="r"><code>annotate_color(x = 3, y = .03, 
                labels = &#39;I want many more colors&#39;,
                colors = c(&#39;blue&#39;, &#39;green&#39;, &#39;purple&#39;, &#39;orange&#39;, &#39;yellow&#39;))</code></pre>
-<p><br> <br></p>
+<p><br></p>
 <p>Both of these blocks of code would evaluate to something like this:</p>
 <p><img src="/post/2017-10-20-colorful-plot-annotations_files/figure-html/plotexample-1.jpeg" width="672" /></p>
-<p><br></p>
 <p>Hopefully, you won’t actually use it to create a graph that looks like that as it is quite ugly.<br />
 This is an example of how it could be better used.</p>
 <p><img src="/post/2017-10-20-colorful-plot-annotations_files/figure-html/goodexample-1.jpeg" width="672" /></p>
-<p><br> <br></p>
+<p><br></p>
 <div id="input-methods" class="section level3">
 <h3>Input methods</h3>
 <pre class="r"><code># Make or import your data
@@ -81,7 +80,7 @@ data %&gt;%
 # The default geom type for annotate_color() is text, you can change it to any other geom that has a...
 # ... &#39;label&#39; and a &#39;color&#39;argument.
 # &#39;black&#39; is the default value for &#39;default_color&#39;</code></pre>
-<p><br> <br></p>
+<p><br></p>
 </div>
 <div id="the-function" class="section level3">
 <h3>The function</h3>

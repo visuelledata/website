@@ -89,7 +89,7 @@ annotate('text', x = 3, y = .03, parse = T,label = 'phantom("I want many ") * "m
 annotate('text', x = 3, y = .03, parse = T,label = 'phantom("I want many more ") * "colors"', color = 'orange') 
 ```
 
-<br>  <br>
+<br>  
   
 
 This code hides the word that isn't being passed through phantom() and will color it. Then, it stacks the labels onto each other and prints them on the plot. The huge downside of this method is that it is very labor instensive and requires very specific formatting. So I decided to write a function that writes all of the annotate() functions for me.  
@@ -103,7 +103,7 @@ annotate_color(x = 3, y = .03,
                colors = c('blue', 'green', 'purple', 'orange', 'yellow'))
 ```
 
-<br>  <br>  
+<br>  
 
 Both of these blocks of code would evaluate to something like this:
   
@@ -118,7 +118,7 @@ a %>%
                    colors = c('blue', 'green', 'purple', 'orange', 'yellow'))
 ```
   
-<br>  
+
 
 Hopefully, you won't actually use it to create a graph that looks like that as it is quite ugly.  
 This is an example of how it could be better used. 
@@ -174,7 +174,7 @@ pop %>%
   theme(plot.margin = unit(c(0,0, 0, 0), 'cm'))
 ```
   
-<br>  <br>  
+<br>  
   
 ###Input methods
 
@@ -227,7 +227,7 @@ data %>%
 # 'black' is the default value for 'default_color'
 ```
   
-<br>  <br>  
+<br>  
   
 ###The function
 
