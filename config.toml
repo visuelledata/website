@@ -1,29 +1,28 @@
 baseurl = "/"
-title = "Ghostwriter example"
+title = "Visuelle Data"
 theme = "ghostwriter"
 languageCode = "en-us"
-copyright = "My Name"
-disqusShortname = "XXX"
-googleAnalytics = "XXX"
+copyright = "Chris Peralta"
+disqusShortname = ""#"XXX"
+googleAnalytics = ""#"XXX"
 
 [Author]
-    name = "My Name"
-    profile = "https://google.com/+XXX"
+    name = "Chris Peralta"
+    profile = ""#"https://google.com/+XXX"
 
 [Taxonomies]
     tag = "tags"
 
 [Params]
     intro = true
-    headline = "Ghostwriter example"
-    description = "Ghostwriter example description"
-    github = "https://github.com/XXX"
-    gitlab = "https://gitlab.com/XXX"
-    linkedin = "https://linkedin.com/in/XXX/"
-    gplus = "https://google.com/+XXX"
-    twitter = "https://twitter.com/XXX"
-    stackoverflow = "https://stackoverflow.com/users/XXX/YYY"
-    email = "XXX@example.com"
+    headline = "Visuelle Data"
+    description = "A data science blog"
+    github = "https://github.com/visuelledata"
+    #linkedin = "https://linkedin.com/in/XXX/"
+    #gplus = "https://google.com/+XXX"
+    #twitter = "https://twitter.com/XXX"
+    #stackoverflow = "https://stackoverflow.com/users/XXX/YYY"
+    email = "chris99994@gmail.com"
     opengraph = true
     shareTwitter = true
     shareFacebook = true
