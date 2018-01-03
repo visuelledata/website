@@ -12,7 +12,7 @@ tags:
 description: ''
 fig_width: 15
 fig_height: 5
-#output: md_document
+output: md_document
 ---
 
 ```{r setup, include=FALSE}
