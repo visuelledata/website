@@ -139,7 +139,7 @@ pop <- readr::read_csv("D:/rproj/hk-gender/preclean-excel.csv",
 pop$age_range <- factor(pop$age_range, levels = unique(pop$age_range))
 
 pop <- pop %>% 
-  gather(chinese_hk_resident:Others, key = 'nationality', value = 'population') %>% 
+  gather(`Chinese (HK Resident)`:Others, key = 'nationality', value = 'population') %>% 
   mutate(prop = population / sum(population, na.rm = TRUE))
 
 
