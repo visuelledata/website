@@ -408,7 +408,7 @@ title_default(plot = pop_nation_bar,
               colors = c('Grey40', 'grey40'))
 ```
 
-This graph shows us that the Filipinos and Indonesians, individually, contribute almost as many women to the gender gap as the locals of Hong Kong, despite making up a much smaller portion of the overall population. This is likely due to the large numbers of domestic helpers employed by families in Hong Kong, which are almost all women from The Philippines and Indonesia.
+The first graph shows us that the Filipinos and Indonesians, individually, contribute almost as many women to the gender gap as the locals of Hong Kong, despite making up a much smaller portion of the overall population. Additionally, Filipinos and Indonesians are the biggest minority groups in Hong Kong and they both are made up of over 90% women! This is likely due to the large numbers of domestic helpers employed by families in Hong Kong, which are almost all women from The Philippines and Indonesia.
 
 So now lets see how Hong Kong's ratio of men to women changes if we exclude domestic helpers from our data.
 ```{r stuff7, echo= FALSE}
@@ -456,6 +456,8 @@ As you can see from the graphs above, domestic helpers are not solely responsibl
 There are `r comma(sum(filter(pop, age_range == '0 - 4' | age_range == '5 - 9')$population, na.rm = TRUE))` children between the ages of 0 and 9, while there are `r comma(sum(only_helpers$population, na.rm = TRUE))` domestic helpers in Hong Kong. 
 
 In other words, there are 1.77 children under 10 years old for each domestic helper in Hong Kong. It should be noted that this number is somewhat misleading, since domestic helpers are hired for a variety of reasons including the care of the elderly. Additionally, domestic helpers make up `r percent(round(sum(only_helpers$population, na.rm = TRUE) / sum(pop$population, na.rm = TRUE), digits = 3))` of the population of Hong Kong, and they undeniably affect the social atmosphere of Hong Kong. 
+
+Other possible contributions to the imbalance could be men taking more overseas jobs than women, men may be more likely to leave Hong Kong, and more mainland women than men could be moving to Hong Kong. 
 
 <br>
 <br>
