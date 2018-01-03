@@ -1,0 +1,482 @@
+---
+title: "[Mini-Project] Hong Kong's Population Gap"
+author: Chris Peralta
+date: '2018-01-03'
+slug: hk-gender
+categories:
+  - R
+tags:
+  - ggplot2
+  - data visualization
+  - design
+description: ''
+fig_width: 15
+fig_height: 5
+#output: md_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dev = 'jpeg', echo = TRUE, fig.keep = 'last')
+options(warn = -1)
+
+library(tidyverse)
+library(forcats)
+library(SciencesPo)
+library(scales)
+library(cowplot)
+library(stringr)
+library(grid)
+library(gridExtra)
+
+plot.new()
+
+pop <- read_csv("D:/rproj/hk-gender/preclean-excel.csv", #this data is by nationality
+                                  na = '-',
+                                  col_types = cols(Australian = col_integer(), 
+                                                   Indonesian = col_integer(), 
+                                                   Japanese = col_integer(), 
+                                                   Nepalese = col_integer(), 
+                                                   Pakistani = col_integer(), 
+                                                   Thai = col_integer()))     #upload data and assign column types
+
+
+pop$age_range <- factor(pop$age_range, levels = unique(pop$age_range))
+pop$sex <- factor(pop$sex, levels = unique(pop$sex))
+
+pop <- pop %>% 
+  gather(`Chinese (HK Resident)`:Others, key = 'nationality', value = 'population') %>% 
+  mutate(prop = population / sum(population, na.rm = TRUE))
+
+
+# Data for everything below the last chunk
+without_helpers <- read_csv("D:/rproj/hk-gender/withouthelpers-preclean.csv", #this data is by ethnicity
+                            na = '-') %>% 
+  gather(Chinese:Multiracial, key = 'ethnicity', value = 'population')
+
+with_helpers <- read_csv("D:/rproj/hk-gender/withhelpers-preclean.csv", 
+                         na = '-') %>% 
+  gather(Chinese:Multiracial, key = 'ethnicity', value = 'population')
+
+only_helpers <- with_helpers %>% 
+  mutate(population = with_helpers$population - without_helpers$population) %>% 
+  filter(population != 0)
+
+#Color Palettes
+women.scale <- RColorBrewer::brewer.pal(9, "Reds")
+men.scale <- RColorBrewer::brewer.pal(9, "Blues")
+sex.scale <- c("female" = "#FB8072", "male" = "#80B1D3")
+
+source('D:/rproj/hk-gender/annotate_color.R') #load annotate_color()
+
+source('D:/rproj/hk-gender/title_no_clip_markdown.R')
+
+
+pop_pyr_format <- function(data, filter_cat = NA){ 
+  if (!is.na(filter_cat)){
+    women <- pop %>% 
+      filter(nationality == filter_cat) %>%
+      mutate(population = (population * -1),
+             prop = (prop * -1))
+    men <- pop %>% 
+      filter(nationality == filter_cat)
+    pop_pyr_data <- bind_rows(subset(women, sex == 'female'), subset(men, sex == 'male')) 
+    return(pop_pyr_data)
+  } else {
+    women <- pop %>% 
+      mutate(population = (population * -1),
+             prop = (prop * -1))
+    men <- pop
+    pop_pyr_data <- bind_rows(subset(women, sex == 'female'), subset(men, sex == 'male'))
+    return(pop_pyr_data)
+  }
+}
+grouped <- pop %>%  
+  group_by(age_range, sex) %>% 
+  summarize(population = sum(population, na.rm = TRUE)) %>% 
+  mutate(prop = population / sum(population))
+
+title_default <- function(plot = last_plot(), title_segments, colors){
+  title_align_no_clip(
+    plot = plot,
+    title_segments = title_segments,
+    colors = colors,
+    axis.title.color = 'Grey40', 
+    axis.text.color =  'Grey40',
+    axis.x.line.color = 'Grey35',
+    axis.y.line.color = 'Grey35', 
+    tick.color = 'Grey35')
+}
+
+```
+
+<br>
+Women significantly outnumber men in Hong Kong. In this paper, I will show you the degree to which men are outnumbered and how significant the gap is. 
+
+<br>
+
+#How badly do women outnumber men?
+
+Women make up `r percent(round((sum(filter(pop, sex == 'female')$population, na.rm = TRUE) / sum(pop$population, na.rm = TRUE)), digits = 3))` of Hong Kong's population, while men make up `r percent(round(1 - sum(filter(pop, sex == 'female')$population, na.rm = TRUE) / sum(pop$population, na.rm = TRUE), digits = 3))` of the population. 
+
+This might not seem excessive, but I'm going to break it down to give you a better picture. First, lets look at a population pyramid so we can get an idea of what the distribution of Hong Kong's population looks like. 
+
+```{r cars, echo = FALSE}
+#overall pop dist
+overall_pop_dist <- pop_pyr_format(pop) %>% 
+  ggplot(aes(x = age_range, y = prop, fill = sex)) +  
+  geom_bar(stat = 'identity', width = .9) +   
+  geom_text(aes(x = age_range, y = 0, label = age_range), 
+            color = 'white', size = 3.5, nudge_x = .05) + 
+  coord_flip(ylim = c(-.1, .1)) +
+  scale_y_continuous(breaks = seq(-.1, .1, .02), 
+                     labels = paste0(as.character(c(seq(10, 0, -2), seq(2, 10, 2))), '%')) +
+  scale_fill_manual(values = c(men.scale[5], women.scale[5])) + 
+  theme_pub(axis_line = TRUE) + 
+  labs(x = 'Age Range\n', y = '\nPopulation') +
+  theme(panel.grid.major = element_line(size = .75),
+        axis.text = element_text(size = 8.35)) +
+  no_major_y_gridlines() +
+  no_legend() + 
+  no_y_text() + 
+  no_y_line() + 
+  no_y_ticks() +
+  annotate(geom = 'text', x = 15, y = -.07, 
+           label = 'Female', color = women.scale[[4]], size = 3.5) +
+  annotate(geom = 'text', x = 14.8, y = .067, 
+           label = 'Male', color = men.scale[[4]], size = 3.5) 
+
+title_default(title_segments = c('Hong Kong Population Pyramid'),
+              colors = c('Grey25'))
+
+```
+
+From this we see that people from 30-59 years of age make up a large portion of the population with women outnumbering men. 
+
+Now, I'll put the bars side by side and change their format, so it will be easier to compare them.  
+
+```{r pressure, echo=FALSE}
+#population by age and gender
+pop_age_gender <- grouped %>% 
+  ggplot(aes(x = age_range, y = prop, color = sex, group = sex)) +
+  geom_hline(yintercept = .5, linetype = 'dotted', color = 'grey20') + 
+  geom_linerange(aes(ymin = 0, ymax = prop), 
+                 position = position_dodge(width = .5), color = 'grey60') + 
+  geom_point(size = 6, position = position_dodge(width = .5)) + 
+  labs(x = '\nAge range', y = 'Percent within age group\n') + 
+  scale_color_manual(values = c(men.scale[5], women.scale[5])) + 
+  scale_y_continuous(limits = c(0, .7), expand = c(0,0), labels = percent) +
+  theme(axis.text.x = element_text(angle = 80, vjust = .2, hjust = .2)) + 
+  no_legend()
+
+title_default(title_segments = c('Percent of ', 'men', ' and ', 'women ', 'within each age group'),
+                    colors = c('Grey25', men.scale[4], 'Grey25', women.scale[4], 'Grey25'))
+                   
+```
+
+First, let's look at some of the individual points
+
+```{r stuff1, echo = FALSE}
+#highlight ends
+highlight_ends <- grouped %>% 
+  mutate(condition = sex == "female" & (age_range == '0 - 4' | age_range == '5 - 9' | age_range == '75 - 79' | 
+                                        age_range == '80 - 84'| age_range == '85+')) %>%
+  mutate(condition = any(condition)) %>% 
+  ggplot(aes(x = age_range, y = prop, color = sex, group = sex)) +
+  geom_linerange(aes(ymin = 0, ymax = prop), 
+                 position = position_dodge(width = .5), color = 'grey95') + 
+  geom_linerange(aes(ymin = 0, ymax = prop, alpha = condition), 
+                 position = position_dodge(width = .5), color = 'grey50') + 
+  geom_point(size = 6, position = position_dodge(width = .5), color = 'grey95') + 
+  geom_point(aes(alpha = condition), 
+             size = 6, position = position_dodge(width = .5)) + 
+  labs(x = 'Age range', y = 'Percent within age group\n') + 
+  scale_color_manual(values = c(men.scale[5], women.scale[5])) +
+  scale_y_continuous(limits = c(0, .7),expand = c(0,0), labels = percent) + 
+  scale_x_discrete(labels = c('0 - 4', '5 - 9', rep(' ', 13), '75 - 79', '80 - 84', '85+')) +
+  theme(axis.text.x = element_text(angle = 80, vjust = .2, hjust = .2)) + 
+  no_legend() + 
+  annotate(geom = 'text', x = .8, y = .63, hjust = 0, 
+           color = 'Grey50', size = 3.8,
+           label = c('More boys are born \nthan girls globally')) + 
+  annotate(geom = 'text', x = 12.8, y = .63, hjust = 0, 
+           color = 'Grey50', size = 3.8,
+           label = c('Women have longer \nlife expectancies than \nmen'))
+
+title_default(title_segments = c('These data points are caused by', 'birth ', 'and ', 'life expectancy ', 'phenomena.'),
+                    colors = c('Grey40', 'Grey20', 'Grey40', 'Grey20', 'Grey40'))
+```
+
+These points are quite interesting, but they can be easily explained.
+
+*For the left side:*
+
+More boys than girls are born globally, you can read about this phenomena [here.](https://www.npr.org/sections/health-shots/2015/03/30/396384911/why-are-more-baby-boys-born-than-girls)
+
+
+
+*For the right side:*
+
+Women across the globe have higher life expectancies than men. 
+
+<br>
+I would say that the most interesting data would be the points I've selected below. 
+
+```{r stuff2, echo = FALSE}
+
+target <- grouped %>%
+  mutate(condition = prop >= 0.504 & sex == "female" & age_range != '75 - 79' & age_range != '80 - 84' & 
+                     age_range != '85+' & age_range != '60 - 64') %>%
+  mutate(condition = any(condition)) %>%
+  ggplot(aes(x = age_range, y = prop, color = sex, group = sex)) +
+  geom_linerange(aes(ymin = 0, ymax = prop),
+                 position = position_dodge(width = .6), color = 'grey95') +
+  geom_linerange(aes(ymin = 0, ymax = prop, alpha = condition),
+                 position = position_dodge(width = .6), color = 'grey50') +
+  geom_point(size = 4, position = position_dodge(width = .6), color = 'grey80') +
+  geom_point(aes(alpha = condition),
+             size = 8, position = position_dodge(width = .6)) +
+  geom_text(data = subset(filter(grouped, sex == 'female'), age_range == '20 - 24' | age_range == '25 - 29'|
+                                                            age_range == '30 - 34' | age_range == '35 - 39'|
+                                                            age_range == '40 - 44' | age_range == '45 - 49'|
+                                                            age_range == '50 - 54' | age_range == '55 - 59'),
+            aes(x = age_range, y = prop, fill = sex, label = percent(round(prop, digits = 2))),
+            color = 'white', size = 2.6, hjust = .2, vjust = 0) +
+  geom_text(data = subset(filter(grouped, sex == 'male'), age_range == '20 - 24' | age_range == '25 - 29'|
+                                                          age_range == '30 - 34' | age_range == '35 - 39'|
+                                                          age_range == '40 - 44' | age_range == '45 - 49'|
+                                                          age_range == '50 - 54' | age_range == '55 - 59'),
+            aes(x = age_range, y = prop, fill = sex, label = percent(round(prop, digits = 2))),
+            color = 'white', size = 2.6, hjust = .75, vjust = .3) +
+  labs(x = '\nAge range', y = 'Percent within age group\n') +
+  scale_color_manual(values = c(men.scale[5], women.scale[5])) +
+  scale_y_continuous(limits = c(0, .7),expand = c(0,0), labels = percent) +
+  scale_x_discrete(labels = c(rep(' ', 4), '20 - 24', '25 - 29', '30 - 34',
+                                           '35 - 39', '40 - 44', '45 - 49',
+                                           '50 - 54', '55 - 59', rep(' ', 6))) +
+  theme(axis.text.x = element_text(angle = 90),
+        axis.title = element_text(color = 'Grey40', size = 14),
+        axis.title.y = element_text(hjust = .94),
+        axis.line.x = element_line(color = 'grey35'),
+        axis.line.y = element_line(color = 'grey35'),
+        axis.text = element_text(color = 'grey40'),
+        axis.ticks = element_line(color = 'grey35')) +
+  no_legend()
+
+
+
+subplot <- pop %>%
+  filter(age_range == '20 - 24' | age_range == '25 - 29'|
+         age_range == '30 - 34' | age_range == '35 - 39'|
+         age_range == '40 - 44' | age_range == '45 - 49'|
+         age_range == '50 - 54' | age_range == '55 - 59') %>%
+  group_by(sex) %>%
+  summarize(population = sum(population, na.rm = TRUE)) %>%
+  mutate(prop = population / sum(population)) %>%
+  ggplot(aes(x = sex, y = prop)) +
+  geom_col(aes(fill = sex), width = .9) +
+  geom_text(aes(label = percent(prop)),
+            color = 'white', vjust = 1.5) +
+  scale_y_continuous(expand = c(0,0)) +
+  scale_fill_manual(values = c(men.scale[3], women.scale[3])) +
+  no_legend() +
+  no_axes() +
+  theme(plot.title = element_text(color = 'grey60', size = 11, hjust = 0)) +
+  ggtitle('  Percent of women and \n  men in highlighted data')
+
+target <- title_default(plot = target,
+                        title_segments = c("Now, let's take a look at these points", ''),
+                        colors = c('Grey40', 'Grey27')) +
+  draw_plot(subplot, x = .296, y = -.097, scale = 0.25)
+target
+
+```
+
+The 35-39 age group alone is made up of 60.1% women! This is also one of the most populous age groups in Hong Kong!
+
+In the 20-59 age group, there are 56% women to 44% men. This group makes up `r percent(sum(filter(pop, age_range == '20 - 24' | age_range == '25 - 29'| age_range == '30 - 34' | age_range == '35 - 39'| age_range == '40 - 44' | age_range == '45 - 49'| age_range == '50 - 54' | age_range == '55 - 59')$population, na.rm = TRUE) / sum(pop$population, na.rm = TRUE))` of the total population of Hong Kong.
+
+In this group, there are `r prettyNum(sum(filter(pop, (sex == 'female') & (age_range == '20 - 24' | age_range == '25 - 29'| age_range == '30 - 34' | age_range == '35 - 39'| age_range == '40 - 44' | age_range == '45 - 49'| age_range == '50 - 54' | age_range == '55 - 59'))$population, na.rm = TRUE) - sum(filter(pop, (sex == 'male') & (age_range == '20 - 24' | age_range == '25 - 29'| age_range == '30 - 34' | age_range == '35 - 39'| age_range == '40 - 44' | age_range == '45 - 49'| age_range == '50 - 54' | age_range == '55 - 59'))$population, na.rm = TRUE), big.mark = ',')` more women than men. These 539,963 women make up `r percent((sum(filter(pop, (sex == 'female') & (age_range == '20 - 24' | age_range == '25 - 29'| age_range == '30 - 34' | age_range == '35 - 39'| age_range == '40 - 44' | age_range == '45 - 49'| age_range == '50 - 54' | age_range == '55 - 59'))$population, na.rm = TRUE) - sum(filter(pop, (sex == 'male') & (age_range == '20 - 24' | age_range == '25 - 29'| age_range == '30 - 34' | age_range == '35 - 39'| age_range == '40 - 44' | age_range == '45 - 49'| age_range == '50 - 54' | age_range == '55 - 59'))$population, na.rm = TRUE)) / sum(pop$population, na.rm = TRUE))` of Hong Kong's population!
+
+You can look at the graph below to see which nationalities contribute the most women to the number above.
+
+```{r stuff4, echo = FALSE}
+#diverging lollipop
+#show biggest nationalities
+#follow with bar chart nationality
+
+temp1 <- pop %>%
+  filter(age_range == '20 - 24' | age_range == '25 - 29'|
+           age_range == '30 - 34' | age_range == '35 - 39'|
+           age_range == '40 - 44' | age_range == '45 - 49'|
+           age_range == '50 - 54' | age_range == '55 - 59') %>%
+  group_by(nationality, sex) %>%
+  summarize(population = sum(population, na.rm = TRUE)) %>%
+  filter(sex == 'male')
+
+temp2 <- pop %>%
+  filter(age_range == '20 - 24' | age_range == '25 - 29'|
+           age_range == '30 - 34' | age_range == '35 - 39'|
+           age_range == '40 - 44' | age_range == '45 - 49'|
+           age_range == '50 - 54' | age_range == '55 - 59') %>%
+  group_by(nationality, sex) %>%
+  summarize(population = sum(population, na.rm = TRUE)) %>%
+  filter(sex == 'female')
+
+temp2$population <- temp2$population - temp1$population
+
+
+temp <- temp2 %>%
+  mutate(condition = population > 0) %>%
+  mutate(condition2 = population > 20000 & population < 190000) %>%
+  ggplot(aes(x = fct_reorder(nationality, population), y = population, label = population)) +
+  geom_point(stat = 'identity', color = men.scale[6], size = 2)  +
+  geom_segment(aes(y = 0, x = nationality, yend = population, xend = nationality),
+               color = men.scale[6]) +
+  geom_segment(aes(alpha = condition, y = 0, x = nationality, yend = population, xend = nationality),
+               color = women.scale[3]) +
+  geom_segment(aes(alpha = condition2, y = 0, x = nationality, yend = population, xend = nationality),
+               color = women.scale[6]) +
+  geom_point(aes(alpha = condition), stat = 'identity', color = women.scale[4], size = 2)  +
+  geom_point(aes(alpha = condition2), stat = 'identity', color = women.scale[7], size = 3)  +
+  labs(x = 'Nationalities\n', y = '\nNumber of excess men or women') +
+  scale_y_continuous(labels = comma) + 
+  coord_flip() +
+  no_legend()
+
+title_default(title_segments = c('Numerical difference between men and women', ''),
+              colors = c('Grey40', 'grey40'))
+
+
+```
+
+```{r stuff5, echo = FALSE}
+pop %>%
+  filter(nationality != 'Chinese (HK Resident)') %>%
+  group_by(nationality) %>%
+  summarize(population = sum(population, na.rm = TRUE)) %>%
+  mutate(condition = nationality == 'Filipino' | nationality == 'Indonesian' |
+                     nationality == 'Chinese (Other)') %>%
+  ggplot(aes(fct_reorder(nationality, population), population)) +
+  geom_col(fill = 'grey 89') +
+  geom_col(aes(alpha = condition), fill = '#807DBA') +
+  scale_alpha_manual(values = c("TRUE" = 1, "FALSE" = 0)) +
+  scale_y_continuous(expand = c(0,0), labels = comma) + 
+  theme_pub(axis_line = TRUE) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1.1)) +
+  labs(x = '\nNationality', y = 'Population\n') +
+  no_legend()
+
+title_default(title_segments = c('Population of minority groups in Hong Kong', ''),
+              colors = c('grey40', 'grey40'))
+
+```
+
+```{r stuff6, echo = FALSE}
+grouped <- pop %>% 
+  group_by(nationality, sex) %>% 
+  summarize(population = sum(population, na.rm = TRUE)) %>% 
+  mutate(prop = population / sum(population))
+
+pop_nation_bar <- pop %>%
+  group_by(nationality, sex) %>%
+  summarize(population = sum(population, na.rm = TRUE)) %>%
+  mutate(prop = population / sum(population)) %>%
+  mutate(condition = nationality == 'Filipino' |
+                     nationality == 'Indonesian' |
+                     nationality == 'Chinese (Other)') %>%
+  ggplot(aes(x = fct_reorder2(nationality, sex, -prop), y = prop, fill = sex)) +
+  geom_col(width = .8, fill = 'grey 90') +
+  geom_col(aes(alpha = condition, fill = sex), width = .8) +
+  scale_fill_manual(values = c(men.scale[3], women.scale[5]), expand = c(0,0)) +
+  theme_pub(axis_line = TRUE) +
+  no_gridlines() +
+  scale_y_discrete(expand = c(0,0)) +
+  no_y_line() +
+  no_y_text() +
+  no_y_ticks() +
+  geom_text(data = subset(grouped, sex == 'female'), aes(x = nationality, y = prop,
+                                                         fill = sex, label = percent(prop)),
+            vjust = 1.3, color = 'Grey95', size = 2.5) +
+  no_legend() +
+  labs(x = '\nNationality', y = 'Percent of women in group\n') +
+  theme(axis.text = element_text(angle = 30, hjust = 1.1, vjust = -16)) +
+  annotate('text', x = 13.33, y = 1.01, label = '   -------100%', color = 'grey 50', size = 4)
+
+
+title_default(plot = pop_nation_bar, 
+              title_segments = c('What percent of these nationalities are women?', ''),
+              colors = c('Grey40', 'grey40'))
+```
+
+This graph shows us that the Filipinos and Indonesians, individually, contribute almost as many women to the gender gap as the locals of Hong Kong, despite making up a much smaller portion of the overall population. This is likely due to the large numbers of domestic helpers employed by families in Hong Kong, which are almost all women from The Philippines and Indonesia.
+
+So now lets see how Hong Kong's ratio of men to women changes if we exclude domestic helpers from our data.
+```{r stuff7, echo= FALSE}
+pop %>% 
+  group_by(sex) %>% 
+  summarize(population = sum(population, na.rm = TRUE)) %>% 
+  mutate(prop = population / sum(population)) %>% 
+  ggplot(aes(x = sex, y = prop, fill = sex)) + 
+  geom_col(width = .7) + 
+  geom_text(aes(label = percent(prop)), 
+            vjust = 1.8, size = 3.5, color = 'white') +
+  labs(x = '\nGender', y = 'Total percent of men and women\n') + 
+  scale_fill_manual(values = c(men.scale[4], women.scale[4])) + 
+  scale_y_continuous(limits = c(0, .7), expand = c(0,0), labels = percent) + 
+  no_legend() + 
+  no_x_ticks()
+
+plot_with_helpers <- title_default(title_segments = c('     Including Domestic Helpers', ''),
+                                   colors = c('Grey40', 'Grey40'))
+
+without_helpers %>%
+  group_by(sex) %>% 
+  summarize(population = sum(population, na.rm = TRUE)) %>%
+  mutate(prop = population / sum(population)) %>% 
+  ggplot(aes(x = fct_reorder(sex, prop), y = prop, fill = fct_reorder(sex, prop))) + 
+  geom_col(width = .7) + 
+  geom_text(aes(label = percent(prop)), 
+            vjust = 1.8, size = 3.5, color = 'white') + 
+  labs(x = '\nGender', y = 'Total percent of men and women\n') + 
+  scale_fill_manual(values = c(men.scale[4], women.scale[4])) + 
+  scale_y_continuous(limits = c(0, .7), expand = c(0,0), labels = percent) + 
+  no_legend() + 
+  no_x_ticks()
+
+plot_without_helpers <- title_default(title_segments = c('     Excluding Domestic Helpers', ''),
+                                      colors = c('Grey40', 'Grey40'))
+
+plot_grid(plot_with_helpers, plot_without_helpers)
+
+
+```
+
+As you can see from the graphs above, domestic helpers are not solely responsible for the imbalance of men and women, but they do contribute to it. 
+
+There are `r comma(sum(filter(pop, age_range == '0 - 4' | age_range == '5 - 9')$population, na.rm = TRUE))` children between the ages of 0 and 9, while there are `r comma(sum(only_helpers$population, na.rm = TRUE))` domestic helpers in Hong Kong. 
+
+In other words, there are 1.77 children under 10 years old for each domestic helper in Hong Kong. It should be noted that this number is somewhat misleading, since domestic helpers are hired for a variety of reasons including the care of the elderly. Additionally, domestic helpers make up `r percent(round(sum(only_helpers$population, na.rm = TRUE) / sum(pop$population, na.rm = TRUE), digits = 3))` of the population of Hong Kong, and they undeniably affect the social atmosphere of Hong Kong. 
+
+<br>
+<br>
+<br>
+
+
+
+
+All of the data used in my calculations and graphs is from Hong Kong's 2016 Population Census.
+
+The data is from tables A117a, A117b, and A114 and is distributed by the Census and Statistics Department. 
+
+It is available for download on Hong Kong's open data portal [here.](https://data.gov.hk/en-data/dataset/hk-censtatd-16bc-2016-population-by-census-main-tables)
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+
