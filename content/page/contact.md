@@ -10,10 +10,13 @@ description = "How to contact me."
 Contact me via email, Whatsapp, or by letter. I'll get back to you promptly!
 
 
-**EMAIL**   chris99994@gmail.com <br>
+**EMAIL**   chris99994@gmail.com 
+            
             cperalta@purdue.alumni.edu
             
 **PHONE**   +852 6067 6474
+
+<br>
 
 **MAIL**    Flat 6, 27/F, Block F, 
             Tak Bo Garden, 
