@@ -462,7 +462,7 @@ In other words, there are 1.77 children under 10 years old for each domestic hel
 <br>
 
 
-
+You can view the code to make these graphs [here.](https://github.com/visuelledata/hk-gender/blob/master/hk-gender-post.Rmd)
 
 All of the data used in my calculations and graphs is from Hong Kong's 2016 Population Census.
 
