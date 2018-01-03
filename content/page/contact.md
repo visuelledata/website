@@ -7,4 +7,14 @@ description = "How to contact me."
 
 ## Contact
 
-Aenean ipsum justo, semper eu nisl ut, pretium tincidunt sem. Praesent et diam sit amet lacus lobortis dictum a id lacus. Quisque hendrerit sit amet turpis eu varius. Ut id lorem ac felis ultrices tincidunt. Pellentesque consequat arcu ac fringilla imperdiet. Phasellus pellentesque, sapien non pulvinar blandit, sapien ante aliquet felis, vel porttitor sapien ante in lacus. Fusce non urna aliquet, malesuada nibh vel, luctus urna. Phasellus ut lacus molestie, varius purus quis, malesuada lorem.
+Contact me via email, Whatsapp, or by letter. I'll get back to you promptly!
+
+
+**Email**   chris99994@gmail.com
+            cperalta@purdue.alumni.edu
+            
+**Phone**   +852 6067 6474
+
+**Mail**    Flat 6, 27/F, Block F, 
+            Tak Bo Garden, 
+            3 Ngau Tau Kok Rd, Kowloon
