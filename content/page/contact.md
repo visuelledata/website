@@ -9,6 +9,7 @@ description = "How to contact me."
 
 Contact me via email, Whatsapp, or by letter. I'll get back to you promptly!
 
+<br> 
 
 **EMAIL**   chris99994@gmail.com  **or**  cperalta@purdue.alumni.edu
             
