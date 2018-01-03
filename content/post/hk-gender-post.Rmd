@@ -470,7 +470,7 @@ All of the data used in my calculations and graphs is from Hong Kong's 2016 Popu
 
 The data is from tables A117a, A117b, and A114 and is distributed by the Census and Statistics Department. 
 
-It is available for download on Hong Kong's open data portal [here.](https://data.gov.hk/en-data/dataset/hk-censtatd-16bc-2016-population-by-census-main-tables)
+They are available for download on Hong Kong's open data portal [here.](https://data.gov.hk/en-data/dataset/hk-censtatd-16bc-2016-population-by-census-main-tables)
 
 
 <br>
