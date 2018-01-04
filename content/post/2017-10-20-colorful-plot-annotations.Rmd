@@ -127,7 +127,7 @@ This is an example of how it could be better used.
 
 
 ```{r goodexample, echo = FALSE} 
-pop <- readr::read_csv("D:/rproj/hk-gender/preclean-excel.csv", 
+pop <- readr::read_csv("D:/rproj/hk-gender/precleaned_data/preclean-excel.csv", 
                 na = '-',
                 col_types = cols(Australian = col_integer(), 
                                  Indonesian = col_integer(), 

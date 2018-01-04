@@ -24,13 +24,10 @@ library(forcats)
 library(SciencesPo)
 library(scales)
 library(cowplot)
-library(stringr)
-library(grid)
-library(gridExtra)
 
 plot.new()
 
-pop <- read_csv("D:/rproj/hk-gender/preclean-excel.csv", #this data is by nationality
+pop <- read_csv("D:/rproj/hk-gender/precleaned_data/preclean-excel.csv", #this data is by nationality
                                   na = '-',
                                   col_types = cols(Australian = col_integer(), 
                                                    Indonesian = col_integer(), 
@@ -49,11 +46,11 @@ pop <- pop %>%
 
 
 # Data for everything below the last chunk
-without_helpers <- read_csv("D:/rproj/hk-gender/withouthelpers-preclean.csv", #this data is by ethnicity
+without_helpers <- read_csv("D:/rproj/hk-gender/precleaned_data/withouthelpers-preclean.csv", #this data is by ethnicity
                             na = '-') %>% 
   gather(Chinese:Multiracial, key = 'ethnicity', value = 'population')
 
-with_helpers <- read_csv("D:/rproj/hk-gender/withhelpers-preclean.csv", 
+with_helpers <- read_csv("D:/rproj/hk-gender/precleaned_data/withhelpers-preclean.csv", 
                          na = '-') %>% 
   gather(Chinese:Multiracial, key = 'ethnicity', value = 'population')
 
@@ -66,9 +63,9 @@ women.scale <- RColorBrewer::brewer.pal(9, "Reds")
 men.scale <- RColorBrewer::brewer.pal(9, "Blues")
 sex.scale <- c("female" = "#FB8072", "male" = "#80B1D3")
 
-source('D:/rproj/hk-gender/annotate_color.R') #load annotate_color()
+source('D:/rproj/hk-gender/functions/annotate_color.R') #load annotate_color()
 
-source('D:/rproj/hk-gender/title_no_clip_markdown.R')
+source('D:/rproj/hk-gender/functions/title_no_clip_markdown.R')
 
 
 pop_pyr_format <- function(data, filter_cat = NA){ 
@@ -464,7 +461,7 @@ Other possible contributions to the imbalance could be men taking more overseas 
 <br>
 
 
-You can view the code to make these graphs [here.](https://github.com/visuelledata/hk-gender/blob/master/hk-gender-post.Rmd)
+You can view the code to generate these graphs [here.](https://github.com/visuelledata/hk-gender/blob/master/hk-gender-post.Rmd)
 
 All of the data used in my calculations and graphs is from Hong Kong's 2016 Population Census.
 
