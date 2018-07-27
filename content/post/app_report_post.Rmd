@@ -15,7 +15,7 @@ output: md_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(dev = 'jpeg', echo = TRUE, fig.keep = 'last')
+knitr::opts_chunk$set(dev = 'jpeg', echo = FALSE, fig.keep = 'last')
 options(warn = -1)
 ```
 
