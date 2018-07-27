@@ -10,7 +10,8 @@ tags:
   - data visualization
   - automation
   - reporting
-output: html_document
+description: ''
+output: md_document
 ---
 
 ```{r setup, include=FALSE}
