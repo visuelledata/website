@@ -1,6 +1,6 @@
 ---
-title: '[Project] Automated App Usage Reporting'
-author: 'Chris Peralta'
+title: '[Project] Automated App Reporting'
+author: Chris Peralta
 date: '2018-07-27'
 slug: app-report
 categories:
@@ -11,7 +11,7 @@ tags:
   - automation
   - reporting
 description: ''
-output: md_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
