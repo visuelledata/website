@@ -21,7 +21,7 @@ library(tictoc)
 
 ##Introduction
 
-**frite** is a package that enables one to easily write and modify functions. It can be used to inject, assign, or remove code in a function.  There are also functions that enable you to use this package more easily. You can use the diagnostic functions to test any function that you can think of. It also has applications in code generation or metaprogramming. 
+**frite** is a package that enable anyone to easily write and modify functions with code. The tools it provides have applications in code generation or metaprogramming. It can also be used to inject, assign, or remove code in a function. 
 
 If you want to view the code, here is the [GitHub repository](https://github.com/visuelledata/frite).
 

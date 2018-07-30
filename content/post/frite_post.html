@@ -12,7 +12,7 @@ editor_options:
 <p><a href="https://travis-ci.org/visuelledata/frite"><img src="https://travis-ci.org/visuelledata/frite.svg?branch=master" alt="Travis-CI Build Status" /></a><a href="https://cran.r-project.org/package=frite"><img src="https://cranlogs.r-pkg.org/badges/frite" /></a><a href="https://cran.r-project.org/package=frite"><img src="http://www.r-pkg.org/badges/version/frite" alt="CRAN Status Badge" /></a></p>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p><strong>frite</strong> is a package that enables one to easily write and modify functions. It can be used to inject, assign, or remove code in a function. There are also functions that enable you to use this package more easily. You can use the diagnostic functions to test any function that you can think of. It also has applications in code generation or metaprogramming.</p>
+<p><strong>frite</strong> is a package that enable anyone to easily write and modify functions with code. The tools it provides have applications in code generation or metaprogramming. It can also be used to inject, assign, or remove code in a function.</p>
 <p>If you want to view the code, here is the <a href="https://github.com/visuelledata/frite">GitHub repository</a>.</p>
 </div>
 <div id="the-functions" class="section level2">
@@ -48,7 +48,7 @@ reduce_timed(1:100000, sum, .init = 0)
 #&gt; [1] 5000050000
 
 is.output.same(reduce_timed(1:100000, sum, .init = 0), reduce)
-#&gt; 0.13 sec elapsed
+#&gt; 0.14 sec elapsed
 #&gt; [1] TRUE</code></pre>
 <p><code>tictocify</code> will return a nearly identical timed version of a function. It does this by creating a function call and inserting <code>tic()</code>, <code>toc()</code>, and a return statement around the call.</p>
 <p><code>is.output.same</code> evaluates the call in the first argument and replaces the function in the first call and re-evaluates it with a new output and checks that they are identical.</p>
@@ -91,7 +91,7 @@ is.output.same(reduce_timed(1:100000, sum, .init = 0), reduce)
 
 is.output.same(reduce_timed(1:100000, sum, .init = 0), reduce_timed1)
 #&gt; 0.14 sec elapsed
-#&gt; 0.13 sec elapsed
+#&gt; 0.14 sec elapsed
 #&gt; [1] TRUE</code></pre>
 <p>Note: Everything above can be piped.</p>
 <p>These types of modifications can be difficult to make sequentially, so there are a couple of helper functions to allow you to see what you’re doing.</p>
@@ -102,7 +102,7 @@ is.output.same(reduce_timed(1:100000, sum, .init = 0), reduce_timed1)
 #&gt;     .f &lt;- as_mapper(.f, ...)
 #&gt;     .Call(map_impl, environment(), &quot;.x&quot;, &quot;.f&quot;, &quot;list&quot;)
 #&gt; }
-#&gt; &lt;bytecode: 0x0000000017920f40&gt;
+#&gt; &lt;bytecode: 0x0000000013920f40&gt;
 #&gt; &lt;environment: namespace:purrr&gt;
 
 
