@@ -43,11 +43,13 @@ Every month Tasker runs a script from my phone to turn on my PC, then sends a me
 </div>
 <img src="static/D:/rproj/website/static/img/plot1.jpeg" alt="Total app usage" height="220" width="600">
 ![Total app usage](/post/app_report_post_files/plot1.jpeg){width=220px height=600px}
+<img src = "/img/plot1.jpeg"></img>
 
 Top 10 apps have changed see: Hyperion, Keep
 
 <img src="static/D:/rproj/website/static/img/plot2.jpeg" alt="Group of plots" height="600" width="600">
 ![Group of plots](/post/app_report_post_files/plot2.jpeg){width=600px height=600px}
+<img src = "/img/plot2.jpeg"></img>
 
 **Note:** Some of the lines don't represent apps. Many of them are names of books, which I intentionally included. 
 
