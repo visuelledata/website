@@ -41,14 +41,11 @@ Every month Tasker runs a script from my phone to turn on my PC, then sends a me
 ### Monthly app report
 #### July 27, 2018
 </div>
-<img src="D:/rproj/website/content/post/plot1.jpeg" alt="Total app usage" height="220" width="600">
+<img src="D:/rproj/website/public/img/plot1.jpeg" alt="Total app usage" height="220" width="600">
 
 Top 10 apps have changed see: Hyperion, Keep
 
-<img src="D:/rproj/website/content/post/plot2.jpeg" alt="Group of plots" height="600" width="600">
+<img src="D:/rproj/website/public/img/plot2.jpeg" alt="Group of plots" height="600" width="600">
 
 **Note:** Some of the lines don't represent apps. Many of them are names of books, which I intentionally included. 
 
-```{r}
-plot.new()
-```
