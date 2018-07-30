@@ -48,7 +48,7 @@ reduce_timed(1:100000, sum, .init = 0)
 #&gt; [1] 5000050000
 
 is.output.same(reduce_timed(1:100000, sum, .init = 0), reduce)
-#&gt; 0.14 sec elapsed
+#&gt; 0.12 sec elapsed
 #&gt; [1] TRUE</code></pre>
 <p><code>tictocify</code> will return a nearly identical timed version of a function. It does this by creating a function call and inserting <code>tic()</code>, <code>toc()</code>, and a return statement around the call.</p>
 <p><code>is.output.same</code> evaluates the call in the first argument and replaces the function in the first call and re-evaluates it with a new output and checks that they are identical.</p>
@@ -90,7 +90,7 @@ is.output.same(reduce_timed(1:100000, sum, .init = 0), reduce)
 #&gt; &lt;environment: namespace:purrr&gt;
 
 is.output.same(reduce_timed(1:100000, sum, .init = 0), reduce_timed1)
-#&gt; 0.14 sec elapsed
+#&gt; 0.12 sec elapsed
 #&gt; 0.13 sec elapsed
 #&gt; [1] TRUE</code></pre>
 <p>Note: Everything above can be piped.</p>
@@ -102,7 +102,7 @@ is.output.same(reduce_timed(1:100000, sum, .init = 0), reduce_timed1)
 #&gt;     .f &lt;- as_mapper(.f, ...)
 #&gt;     .Call(map_impl, environment(), &quot;.x&quot;, &quot;.f&quot;, &quot;list&quot;)
 #&gt; }
-#&gt; &lt;bytecode: 0x00000000179210f0&gt;
+#&gt; &lt;bytecode: 0x0000000013921010&gt;
 #&gt; &lt;environment: namespace:purrr&gt;
 
 
