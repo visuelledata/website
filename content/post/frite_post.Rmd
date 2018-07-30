@@ -1,0 +1,129 @@
+---
+title: "[Project] Frite Package"
+author: Chris Peralta
+date: '2018-07-01'
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(frite)
+library(purrr)
+library(tictoc)
+```
+[![Travis-CI Build Status](https://travis-ci.org/visuelledata/frite.svg?branch=master)](https://travis-ci.org/visuelledata/frite)
+[![](https://cranlogs.r-pkg.org/badges/frite)](https://cran.r-project.org/package=frite)
+[![CRAN Status Badge](http://www.r-pkg.org/badges/version/frite)](https://cran.r-project.org/package=frite)
+
+##Introduction
+
+**frite** is a package that enables one to easily write and modify functions. It can be used to inject, assign, or remove code in a function.  There are also functions that enable you to use this package more easily. You can use the diagnostic functions to test any function that you can think of. It also has applications in code generation or metaprogramming. 
+
+If you want to view the code, here is the [GitHub repository](https://github.com/visuelledata/frite).
+
+##The functions
+
+* Diagnostic <br>
+    * `tictocify` *returns a nearly identical timed version of its input* <br>
+    * `is.output.same` *performs call on multiple functions and sees if they match* 
+  
+  
+* Modification <br>
+    * `line_assign` *inserts `assign()` into a function* <br>
+    * `line_insert` *inserts code into a function* <br>
+    * `line_remove` *removes code from a function* <br>
+    * `copy_args` *copies the arguments of one function to another* 
+  
+* Helping <br>
+    * `list_body` *converts function body to a list* <br>
+    * `plot_body` *plots `list_body()` so you can inspect the body*
+
+
+##Diagnostic functions
+
+```{r diagnostic}
+# Defining a new function
+reduce_timed <- tictocify(reduce)
+
+# Now to test it against the original reduce
+reduce_timed(1:100000, sum, .init = 0) 
+
+is.output.same(reduce_timed(1:100000, sum, .init = 0), reduce)
+```
+
+`tictocify` will return a nearly identical timed version of a function. It does this by creating a function call and inserting `tic()`, `toc()`, and a return statement around the call. 
+
+`is.output.same` evaluates the call in the first argument and replaces the function in the first call and re-evaluates it with a new output and checks that they are identical. 
+
+```{r modification}
+# Constructing a different version of reduce_timed
+(reduce_timed1 <- line_insert(reduce, after_line = 1, quote(tic())))
+
+(reduce_timed1 <- line_assign(reduce_timed1, line = 3, 'value'))
+
+(reduce_timed1 <- line_insert(reduce_timed1, after_line = 3, quote(toc())))
+
+(reduce_timed1 <- line_insert(reduce_timed1, after_line = 4,
+                              quote(return(value))))
+
+is.output.same(reduce_timed(1:100000, sum, .init = 0), reduce_timed1)
+```
+Note: Everything above can be piped. 
+
+These types of modifications can be difficult to make sequentially, so there are a couple of helper functions to allow you to see what you're doing. 
+
+```{r helping, fig.width = 4, fig.height=3}
+plot_body(map)
+
+
+map_hello <- map %>% 
+  line_insert(after_line = 1, quote(print("Hello!")))
+
+list_body(map_hello)
+
+map_hello(list(1, 2, "b"), assertthat::is.number)
+```
+
+##Recursively building functions
+
+You can use the modification functions to build functions with recursion. A simple example is below. 
+
+```{r recursion}
+spammer <- function() {}
+
+add_print <- function(.f, n) {
+  
+  .f <- line_insert(.f, 1, quote(print("a")))
+  
+  n <- n - 1
+  
+  if (n > 0) return(add_print(.f, n))
+  if (n == 0) return(.f)
+}
+
+add_print(spammer, 5)
+```
+
+If you want to learn more, you can view the reference manual or install `frite` and begin experimenting. 
+<br>
+<br>
+<br>
+
+
+##Installation
+
+You can install `frite` from cran: 
+
+`install.packages("frite")`
+
+Or you can install the development version from github: 
+
+`install.packages("devtools")`
+
+`devtools::install_github("visuelledata/frite")`

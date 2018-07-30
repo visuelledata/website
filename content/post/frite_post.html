@@ -1,0 +1,169 @@
+---
+title: "[Project] Frite Package"
+author: Chris Peralta
+date: '2018-07-01'
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+<p><a href="https://travis-ci.org/visuelledata/frite"><img src="https://travis-ci.org/visuelledata/frite.svg?branch=master" alt="Travis-CI Build Status" /></a> <a href="https://cran.r-project.org/package=frite"><img src="https://cranlogs.r-pkg.org/badges/frite" /></a> <a href="https://cran.r-project.org/package=frite"><img src="http://www.r-pkg.org/badges/version/frite" alt="CRAN Status Badge" /></a></p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p><strong>frite</strong> is a package that enables one to easily write and modify functions. It can be used to inject, assign, or remove code in a function. There are also functions that enable you to use this package more easily. You can use the diagnostic functions to test any function that you can think of. It also has applications in code generation or metaprogramming.</p>
+<p>If you want to view the code, here is the <a href="https://github.com/visuelledata/frite">GitHub repository</a>.</p>
+</div>
+<div id="the-functions" class="section level2">
+<h2>The functions</h2>
+<ul>
+<li>Diagnostic <br>
+<ul>
+<li><code>tictocify</code> <em>returns a nearly identical timed version of its input</em> <br></li>
+<li><code>is.output.same</code> <em>performs call on multiple functions and sees if they match</em></li>
+</ul></li>
+<li>Modification <br>
+<ul>
+<li><code>line_assign</code> <em>inserts <code>assign()</code> into a function</em> <br></li>
+<li><code>line_insert</code> <em>inserts code into a function</em> <br></li>
+<li><code>line_remove</code> <em>removes code from a function</em> <br></li>
+<li><code>copy_args</code> <em>copies the arguments of one function to another</em></li>
+</ul></li>
+<li>Helping <br>
+<ul>
+<li><code>list_body</code> <em>converts function body to a list</em> <br></li>
+<li><code>plot_body</code> <em>plots <code>list_body()</code> so you can inspect the body</em></li>
+</ul></li>
+</ul>
+</div>
+<div id="diagnostic-functions" class="section level2">
+<h2>Diagnostic functions</h2>
+<pre class="r"><code># Defining a new function
+reduce_timed &lt;- tictocify(reduce)
+
+# Now to test it against the original reduce
+reduce_timed(1:100000, sum, .init = 0) 
+#&gt; 0.17 sec elapsed
+#&gt; [1] 5000050000
+
+is.output.same(reduce_timed(1:100000, sum, .init = 0), reduce)
+#&gt; 0.14 sec elapsed
+#&gt; [1] TRUE</code></pre>
+<p><code>tictocify</code> will return a nearly identical timed version of a function. It does this by creating a function call and inserting <code>tic()</code>, <code>toc()</code>, and a return statement around the call.</p>
+<p><code>is.output.same</code> evaluates the call in the first argument and replaces the function in the first call and re-evaluates it with a new output and checks that they are identical.</p>
+<pre class="r"><code># Constructing a different version of reduce_timed
+(reduce_timed1 &lt;- line_insert(reduce, after_line = 1, quote(tic())))
+#&gt; function (.x, .f, ..., .init) 
+#&gt; {
+#&gt;     tic()
+#&gt;     reduce_impl(.x, .f, ..., .init = .init, .left = TRUE)
+#&gt; }
+#&gt; &lt;environment: namespace:purrr&gt;
+
+(reduce_timed1 &lt;- line_assign(reduce_timed1, line = 3, &#39;value&#39;))
+#&gt; function (.x, .f, ..., .init) 
+#&gt; {
+#&gt;     tic()
+#&gt;     assign(&quot;value&quot;, reduce_impl(.x, .f, ..., .init = .init, .left = TRUE))
+#&gt; }
+#&gt; &lt;environment: namespace:purrr&gt;
+
+(reduce_timed1 &lt;- line_insert(reduce_timed1, after_line = 3, quote(toc())))
+#&gt; function (.x, .f, ..., .init) 
+#&gt; {
+#&gt;     tic()
+#&gt;     assign(&quot;value&quot;, reduce_impl(.x, .f, ..., .init = .init, .left = TRUE))
+#&gt;     toc()
+#&gt; }
+#&gt; &lt;environment: namespace:purrr&gt;
+
+(reduce_timed1 &lt;- line_insert(reduce_timed1, after_line = 4,
+                              quote(return(value))))
+#&gt; function (.x, .f, ..., .init) 
+#&gt; {
+#&gt;     tic()
+#&gt;     assign(&quot;value&quot;, reduce_impl(.x, .f, ..., .init = .init, .left = TRUE))
+#&gt;     toc()
+#&gt;     return(value)
+#&gt; }
+#&gt; &lt;environment: namespace:purrr&gt;
+
+is.output.same(reduce_timed(1:100000, sum, .init = 0), reduce_timed1)
+#&gt; 0.14 sec elapsed
+#&gt; 0.12 sec elapsed
+#&gt; [1] TRUE</code></pre>
+<p>Note: Everything above can be piped.</p>
+<p>These types of modifications can be difficult to make sequentially, so there are a couple of helper functions to allow you to see what you’re doing.</p>
+<pre class="r"><code>plot_body(map)</code></pre>
+<p><img src="/post/frite_post_files/figure-html/helping-1.png" width="384" /></p>
+<pre><code>#&gt; function (.x, .f, ...) 
+#&gt; {
+#&gt;     .f &lt;- as_mapper(.f, ...)
+#&gt;     .Call(map_impl, environment(), &quot;.x&quot;, &quot;.f&quot;, &quot;list&quot;)
+#&gt; }
+#&gt; &lt;bytecode: 0x0000000013921058&gt;
+#&gt; &lt;environment: namespace:purrr&gt;
+
+
+map_hello &lt;- map %&gt;% 
+  line_insert(after_line = 1, quote(print(&quot;Hello!&quot;)))
+
+list_body(map_hello)
+#&gt; [[1]]
+#&gt; `{`
+#&gt; 
+#&gt; [[2]]
+#&gt; print(&quot;Hello!&quot;)
+#&gt; 
+#&gt; [[3]]
+#&gt; .f &lt;- as_mapper(.f, ...)
+#&gt; 
+#&gt; [[4]]
+#&gt; .Call(map_impl, environment(), &quot;.x&quot;, &quot;.f&quot;, &quot;list&quot;)
+
+map_hello(list(1, 2, &quot;b&quot;), assertthat::is.number)
+#&gt; [1] &quot;Hello!&quot;
+#&gt; [[1]]
+#&gt; [1] TRUE
+#&gt; 
+#&gt; [[2]]
+#&gt; [1] TRUE
+#&gt; 
+#&gt; [[3]]
+#&gt; [1] FALSE</code></pre>
+</div>
+<div id="recursively-building-functions" class="section level2">
+<h2>Recursively building functions</h2>
+<p>You can use the modification functions to build functions with recursion. A simple example is below.</p>
+<pre class="r"><code>spammer &lt;- function() {}
+
+add_print &lt;- function(.f, n) {
+  
+  .f &lt;- line_insert(.f, 1, quote(print(&quot;a&quot;)))
+  
+  n &lt;- n - 1
+  
+  if (n &gt; 0) return(add_print(.f, n))
+  if (n == 0) return(.f)
+}
+
+add_print(spammer, 5)
+#&gt; function () 
+#&gt; {
+#&gt;     print(&quot;a&quot;)
+#&gt;     print(&quot;a&quot;)
+#&gt;     print(&quot;a&quot;)
+#&gt;     print(&quot;a&quot;)
+#&gt;     print(&quot;a&quot;)
+#&gt; }</code></pre>
+<p>If you want to learn more, you can view the reference manual or install <code>frite</code> and begin experimenting. <br> <br> <br></p>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>You can install <code>frite</code> from cran:</p>
+<p><code>install.packages(&quot;frite&quot;)</code></p>
+<p>Or you can install the development version from github:</p>
+<p><code>install.packages(&quot;devtools&quot;)</code></p>
+<p><code>devtools::install_github(&quot;visuelledata/frite&quot;)</code></p>
+</div>
