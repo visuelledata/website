@@ -35,23 +35,20 @@ The report is designed and generated in R as an HTML file. It pulls the data fro
 Every month Tasker runs a script from my phone to turn on my PC, then sends a message to the EventGhost (Windows automation program). EventGhost then runs a shell command to run the [create_report.R](https://github.com/visuelledata/AppReports/blob/master/create_report.R) script. The report is then generated and emailed using R. 
 
 
-
 ### Example report: 
+<hr>
 <div align="right">
 ### Monthly app report
 #### July 27, 2018
 </div>
-<img src="D:/rproj/website/static/img/plot1.jpeg" alt="Total app usage" height="220" width="600">
-<!-- ![Total app usage](/post/app_report_post_files/plot1.jpeg){width=220px height=600px} -->
-<!-- <img src = "/img/plot1.jpeg"></img> -->
-<!-- ![](/post/app_report_post_files/plot1.jpeg){width=220px height=600px} -->
+
+<img src = "/img/plot1.jpeg"></img>
 
 Top 10 apps have changed see: Hyperion, Keep
 
-<img src="D:/rproj/website/static/img/plot2.jpeg" alt="Group of plots" height="600" width="600">
+<img src = "/img/plot2.jpeg"></img>
 
-<!-- ![Group of plots](/post/app_report_post_fi![](/post/app_report_post_files/plot1.jpeg){width=220px height=600px}les/plot2.jpeg){width=600px height=600px} -->
-<!-- <img src = "/img/plot2.jpeg"></img> -->
+<hr>
 
 **Note:** Some of the lines don't represent apps. Many of them are names of books, which I intentionally included. 
 
