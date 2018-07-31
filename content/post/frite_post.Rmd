@@ -17,7 +17,7 @@ library(frite)
 library(purrr)
 library(tictoc)
 ```
-[![Travis-CI Build Status](https://travis-ci.org/visuelledata/frite.svg?branch=master)](https://travis-ci.org/visuelledata/frite)[![](https://cranlogs.r-pkg.org/badges/frite)](https://cran.r-project.org/package=frite)[![CRAN Status Badge](http://www.r-pkg.org/badges/version/frite)](https://cran.r-project.org/package=frite)
+[![Travis-CI Build Status](https://travis-ci.org/visuelledata/frite.svg?branch=master)](https://travis-ci.org/visuelledata/frite)[![CRAN Status Badge](http://www.r-pkg.org/badges/version/frite)](https://cran.r-project.org/package=frite)
 
 ##Introduction
 
@@ -76,9 +76,9 @@ Note: Everything above can be piped.
 
 These types of modifications can be difficult to make sequentially, so there are a couple of helper functions to allow you to see what you're doing. 
 
-```{r helping, fig.width = 4, fig.height=3}
+```{r helping}
 plot_body(map)
-
+graphics::rect(xleft = -.15, ybottom = -.2, xright = 1.1, ytop = 1.2, xpd = TRUE)
 
 map_hello <- map %>% 
   line_insert(after_line = 1, quote(print("Hello!")))
@@ -110,8 +110,7 @@ add_print(spammer, 5)
 
 If you want to learn more, you can view the reference manual or install `frite` and begin experimenting. 
 <br>
-<br>
-<br>
+
 
 
 ##Installation
