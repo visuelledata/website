@@ -36,7 +36,6 @@ Every month Tasker runs a script from my phone to turn on my PC, then sends a me
 
 
 ### Example report: 
-<hr>
 <div align="right">
 ### Monthly app report
 #### July 27, 2018
@@ -48,7 +47,8 @@ Top 10 apps have changed see: Hyperion, Keep
 
 <img src = "/img/plot2.jpeg"></img>
 
-<hr>
+<img src = "/img/Capture.jpeg"></img>
+
 
 **Note:** Some of the lines don't represent apps. Many of them are names of books, which I intentionally included. 
 
